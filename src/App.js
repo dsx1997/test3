@@ -39,13 +39,27 @@ function Square(props) {
 
 class Board extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      squares : Array(9).fill(null),
+      xIsNext : true,
+    };
+  }
+
   handleClick(i) {
     console.log('handleClick');
     console.log('i : ' + i);
+    let squares = this.state.squares;
+    squares[i] = (this.state.xIsNext ? 'X' : 'O');
+    this.setState({
+      squares : squares,
+      xIsNext : !this.state.xIsNext,
+    });
   }
 
   renderSquare(i) {
-    return <Square valProps1={i} funcProps1={() => this.handleClick(i)} />;
+    return <Square valProps1={this.state.squares[i]} funcProps1={() => this.handleClick(i)} />;
   }
 
   render() {
