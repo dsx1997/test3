@@ -27,22 +27,25 @@ function App() {
   );
 }
 
-class Square extends React.Component {
+function Square(props) {
   
-  render() {
-    return (
-      
-      <button className="square" >
-        
-      </button>
-    );
-  }
+  return (
+    
+    <button className="square" onClick={props.funcProps1}>
+      {props.valProps1}
+    </button>
+  );
 }
 
 class Board extends React.Component {
 
+  handleClick(i) {
+    console.log('handleClick');
+    console.log('i : ' + i);
+  }
+
   renderSquare(i) {
-    return <Square />;
+    return <Square valProps1={i} funcProps1={() => this.handleClick(i)} />;
   }
 
   render() {
