@@ -39,52 +39,14 @@ function Square(props) {
 
 class Board extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      squares : Array(9).fill(null),
-      xIsNext : true,
-    };
-  }
-
-  handleClick(i) {
-    console.log('In handleClick function ====================================================');
-    console.log('i : ' + i);
-    let squares = this.state.squares;
-    let squares1 = this.state.squares.slice();
-
-    console.log(' = squares');
-    console.log(squares);
-    console.log(' sliced squares');
-    console.log(squares1);
-
-    if(squares[i] || judgeWinner(squares)) {
-      return;
-    }
-    squares[i] = (this.state.xIsNext ? 'X' : 'O');
-    this.setState({
-      squares : squares,
-      xIsNext : !this.state.xIsNext,
-    });
-  }
-
   renderSquare(i) {
-    return <Square valProps1={this.state.squares[i]} funcProps1={() => this.handleClick(i)} />;
+    return <Square valProps1={this.props.valProps2[i]} funcProps1={() => this.props.funcProps2(i)} />;
   }
 
   render() {
     console.log('board render part =========================================')
-    let winner = judgeWinner(this.state.squares);
-    let status;
-    if(winner) {
-      status = 'Winner is : ' + winner;
-    } else {
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-    }
-
     return (
       <div>
-        <div className="status">{status}</div>
         <div className="board-row">
           {this.renderSquare(0)}
           {this.renderSquare(1)}
@@ -106,14 +68,86 @@ class Board extends React.Component {
 }
 
 class Game extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      history : [{
+        squares : Array(9).fill(null)
+      }],
+      xIsNext : true,
+      stepNumber : 0,
+    };
+  }
+
+  handleClick(i) {
+    console.log('In handleClick function ====================================================');
+    console.log('i : ' + i);
+    let history = this.state.history.slice(0, this.state.stepNumber + 1);
+    // let history = this.state.history;
+    
+    let stepNumber  = this.state.stepNumber;
+    console.log('stepNumber : ' + stepNumber);
+    console.log('history');
+    console.log(history);
+    let current = history[history.length - 1];    
+    console.log('current')
+    console.log(current);
+    let squares = current.squares;
+    let squares1 = current.squares.slice();
+
+    console.log(' = squares');
+    console.log(squares);
+    console.log(' sliced squares');
+    console.log(squares1);
+
+    if(squares[i] || judgeWinner(squares)) {
+      return;
+    }
+    squares[i] = (this.state.xIsNext ? 'X' : 'O');
+    this.setState({
+      history : this.state.history.concat([{
+        squares : squares
+      }]),
+      xIsNext : !this.state.xIsNext,
+      stepNumber : this.state.history.length,
+    });
+    console.log('after setState function called ===> ');
+    console.log('history');
+    let h1 = this.state.history;
+    console.log(h1);
+    console.log('current');
+    let c1 = h1[h1.length - 1];
+    console.log(c1);
+    let s1 = c1.squares;
+    console.log('squares');
+    console.log(s1);
+  }
+
   render() {
+
+    console.log('game render part =========================================')    
+    let history = this.state.history.slice(0, this.state.stepNumber + 1);
+    console.log('stepNumber : ' + this.state.stepNumber);
+    console.log('history');
+    console.log(history)
+    let current = history[history.length - 1];
+    console.log('current'); 
+    console.log(current);
+    let winner = judgeWinner(current.squares);
+    let status;
+    if(winner) {
+      status = 'Winner is : ' + winner;
+    } else {
+      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+    }
     return (
       <div className="game">
         <div className="game-board">
-          <Board />
+          <Board valProps2 = {current.squares} funcProps2={(i) => this.handleClick(i)} />
         </div>
         <div className="game-info">
-          <div>{/* status */}</div>
+          <div>{status}</div>
           <ol>{/* TODO */}</ol>
         </div>
       </div>
